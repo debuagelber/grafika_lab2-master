@@ -1,0 +1,9 @@
+﻿  Render.cpp
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\randomtrash.h(43): warning C4091: static : пропускается слева от "Angles", когда ни одна переменная не объявлена
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\render.cpp(110): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\render.cpp(112): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\render.cpp(113): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\render.cpp(322): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\render.cpp(323): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+d:\mycodes\cg_lab_2\grafika_lab2-master\openglrememberproj\render.cpp(324): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+  OpenGLrememberProj.vcxproj -> D:\MyCodes\CG_Lab_2\grafika_lab2-master\Debug\OpenGLrememberProj.exe
