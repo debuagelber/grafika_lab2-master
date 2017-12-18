@@ -1,5 +1,4 @@
 #include "Render.h"
-
 #include <windows.h>
 #include <GL\GL.h>
 #include <GL\GLU.h>
@@ -9,13 +8,1279 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Primitives.h"
-#include "RandomTrash.h"
-
+#include <cmath>
 
 
 bool textureMode = true;
 bool lightMode = true;
+bool alphamode = false;
+bool print_mode = false;
 
+double a = 0;
+
+
+
+//расчет нормалей
+void norm(double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3,int i){
+	double Xa, Ya, Za, Xb, Yb, Zb;
+	double Nx, Ny, Nz;
+	Xa = x3-x2;
+	Ya =y3-y2;
+	Za =z3-z2;
+	Xb =x1-x2;
+	Yb =y1-y2;
+	Zb =z1-z2;
+	Nx = (Ya*Zb-Yb*Za);
+	Ny = 0-(Xa*Zb-Xb*Za);
+	Nz =(Xa*Yb-Xb*Ya);
+	if(i==0)
+	glNormal3d(Nx,Ny,Nz);
+	else
+	glNormal3d(-Nx,-Ny,-Nz);
+}
+
+
+//Кнопка 
+void button_stand(double x, double y, const unsigned char c, double x1, double y1) {
+
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+
+
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0,0+x,1.11+y,0,1.11+x,0+y,0,1);
+
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+	glVertex3d(1.11+x, 1.11+y, 0.0);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+
+	norm(0.17+x,0.17+y,0.3,0.94+x,0.94+y,0.3, 0.94+x,0.17+y,0.3,1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+52)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.94+y, 0.3);
+
+	glTexCoord2d((x1+52)/1024, 1-(y1+51)/1024);
+	glVertex3d(0.94+x, 0.94+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+51)/1024);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glEnd();
+	
+
+
+
+
+
+	norm(0.0+x,0.0+y,0.0,0.17+x,0.17+y,0.3,0.94+x,0.17+y,0.3,1);
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,0.17+x,0.17+y,0.3, 0.17+x,0.94+y,0.3, 0);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 0.94+y, 0.3);
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+
+	glEnd();
+
+	
+
+	norm(0.0+x,1.11+y,0.0,   0.17+x,0.94+y,0.3,   0.94+x,0.94+y,0.3, 0);
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+	glVertex3d(0.17+x, 0.94+y, 0.3);
+	glVertex3d(0.94+x, 0.94+y, 0.3);
+	glVertex3d(1.11+x, 1.11+y, 0);
+
+	glEnd();
+
+	
+	norm(1.11+x,1.11+y,0.0,   0.94+x,0.94+y,0.3,   0.94+x,0.17+y,0.3, 0);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(1.11+x, 1.11+y, 0.0);
+	glVertex3d(0.94+x, 0.94+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.43+y, 0.0);
+	glVertex3d(0.43+x, 0.43+y, -0.3);
+	glVertex3d(0.69+x, 0.43+y, -0.3);
+	glVertex3d(0.69+x, 0.43+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.43+y, 0.0);
+	glVertex3d(0.69+x, 0.43+y, -0.3);
+	glVertex3d(0.69+x, 0.69+y, -0.3);
+	glVertex3d(0.69+x, 0.69+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.69+y, 0.0);
+	glVertex3d(0.69+x, 0.69+y, -0.3);
+	glVertex3d(0.43+x, 0.69+y, -0.3);
+	glVertex3d(0.43+x, 0.69+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.69+y, 0.0);
+	glVertex3d(0.43+x, 0.69+y, -0.3);
+	glVertex3d(0.43+x, 0.43+y, -0.3);
+	glVertex3d(0.43+x, 0.43+y, 0.0);
+
+	glEnd();
+
+}
+
+void button_f(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+
+
+
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0,  0+x,1.11+y,0,  0.62+x,0+y,0,1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+	glVertex3d(0.62+x, 1.11+y, 0.0);
+	glVertex3d(0.62+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+
+	norm(0.17+x,0.17+y,0.3,  0.45+x,0.94+y,0.3, 0.45+x,0.17+y,0.3,  1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	
+	glTexCoord2d((x1+56)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.94+y, 0.3);
+
+
+	glTexCoord2d((x1+56)/1024, 1-(y1+26)/1024);
+	glVertex3d(0.45+x, 0.94+y, 0.3);
+
+	
+	glTexCoord2d(x1/1024, 1-(y1+26)/1024);
+	glVertex3d(0.45+x, 0.17+y, 0.3);
+
+	glEnd();
+	
+
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.45+x,0.17+y,0.3, 1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(0.45+x, 0.17+y, 0.3);
+	glVertex3d(0.62+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,   0.17+x,0.17+y,0.3,   0.17+x,0.94+y,0.3,  0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 0.94+y, 0.3);
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11+y,0.0,   0.17+x,0.94+y,0.3,   0.45+x,0.94+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+	glVertex3d(0.17+x, 0.94+y, 0.3);
+	glVertex3d(0.45+x, 0.94+y, 0.3);
+	glVertex3d(0.62+x, 1.11+y, 0);
+
+	glEnd();
+
+	
+	norm(0.62+x,1.11+y,0.0,   0.45+x,0.94+y,0.3,   0.45+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.62+x, 1.11+y, 0.0);
+	glVertex3d(0.45+x, 0.94+y, 0.3);
+	glVertex3d(0.45+x, 0.17+y, 0.3);
+	glVertex3d(0.62+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.20+x, 0.43+y, 0.0);
+	glVertex3d(0.20+x, 0.43+y, -0.3);
+	glVertex3d(0.42+x, 0.43+y, -0.3);
+	glVertex3d(0.42+x, 0.43+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.42+x, 0.43+y, 0.0);
+	glVertex3d(0.42+x, 0.43+y, -0.3);
+	glVertex3d(0.42+x, 0.69+y, -0.3);
+	glVertex3d(0.42+x, 0.69+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.42+x, 0.69+y, 0.0);
+	glVertex3d(0.42+x, 0.69+y, -0.3);
+	glVertex3d(0.20+x, 0.69+y, -0.3);
+	glVertex3d(0.20+x, 0.69+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.20+x, 0.69+y, 0.0);
+	glVertex3d(0.20+x, 0.69+y, -0.3);
+	glVertex3d(0.20+x, 0.43+y, -0.3);
+	glVertex3d(0.20+x, 0.43+y, 0.0);
+
+	glEnd();
+
+}
+
+
+void button_up_down(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0,  0+x,1.11+y,0,  0.62+x,0+y,0,1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	
+	
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+
+	
+	glVertex3d(0.5+x, 1.11+y, 0.0);
+
+	
+	glVertex3d(0.5+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+	norm(0.1+x,0.17+y,0.3,  0.4+x,0.94+y,0.3, 0.4+x,0.17+y,0.3,  1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.1+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+53)/1024, 1-y1/1024);
+	glVertex3d(0.1+x, 0.94+y, 0.3);
+
+	glTexCoord2d((x1+53)/1024, 1-(y1+20)/1024);
+	glVertex3d(0.4+x, 0.94+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+20)/1024);  
+	glVertex3d(0.4+x, 0.17+y, 0.3);
+
+
+	glEnd();
+	
+	norm(0.0+x,0.0+y,0.0,  0.1+x,0.17+y,0.3,  0.4+x,0.17+y,0.3, 1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.1+x, 0.17+y, 0.3);
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(0.4+x, 0.17+y, 0.3);
+
+
+	glVertex3d(0.5+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,   0.1+x,0.17+y,0.3,   0.1+x,0.94+y,0.3,  0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.1+x, 0.17+y, 0.3);
+	glVertex3d(0.1+x, 0.94+y, 0.3);
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11+y,0.0,   0.1+x,0.94+y,0.3,   0.4+x,0.94+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 1.11+y, 0.0);
+	glVertex3d(0.1+x, 0.94+y, 0.3);
+	glVertex3d(0.4+x, 0.94+y, 0.3);
+	glVertex3d(0.5+x, 1.11+y, 0);
+
+
+	glEnd();
+
+	
+	norm(0.5+x,1.11+y,0.0,   0.4+x,0.94+y,0.3,   0.4+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.5+x, 1.11+y, 0.0);
+	glVertex3d(0.4+x, 0.94+y, 0.3);
+	glVertex3d(0.4+x, 0.17+y, 0.3);
+	glVertex3d(0.5+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.14+x, 0.43+y, 0.0);
+	glVertex3d(0.14+x, 0.43+y, -0.3);
+	glVertex3d(0.35+x, 0.43+y, -0.3);
+	glVertex3d(0.35+x, 0.43+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.35+x, 0.43+y, 0.0);
+	glVertex3d(0.35+x, 0.43+y, -0.3);
+	glVertex3d(0.35+x, 0.69+y, -0.3);
+	glVertex3d(0.35+x, 0.69+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.35+x, 0.69+y, 0.0);
+	glVertex3d(0.35+x, 0.69+y, -0.3);
+	glVertex3d(0.14+x, 0.69+y, -0.3);
+	glVertex3d(0.14+x, 0.69+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.14+x, 0.69+y, 0.0);
+	glVertex3d(0.14+x, 0.69+y, -0.3);
+	glVertex3d(0.14+x, 0.43+y, -0.3);
+	glVertex3d(0.14+x, 0.43+y, 0.0);
+
+	glEnd();
+
+}
+
+void button_tab_delete(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0.0,  0+x,1.11*1.6+y,  0,1.11+x,0+y,0.0, 1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11*1.6+y, 0.0);
+	glVertex3d(1.11+x, 1.11*1.6+y, 0.0);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+	norm(0.17+x,0.17+y,0.3,  0.94+x,1.6+y,0.3, 0.94+x,0.17+y,0.3,1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+86)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 1.6+y, 0.3);
+
+	glTexCoord2d((x1+86)/1024, 1-(y1+50)/1024);
+	glVertex3d(0.94+x, 1.6+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+50)/1024);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+
+	glEnd();
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.17+x,1.6+y,0.3, 0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 1.6+y, 0.3);
+	glVertex3d(0.0+x, 1.11*1.6+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11*1.6+y,0.0,   0.17+x,1.6+y,0.3,   0.94+x,1.6+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 1.11*1.6+y, 0.0);
+	glVertex3d(0.17+x, 1.6+y, 0.3);
+	glVertex3d(0.94+x, 1.6+y, 0.3);
+	glVertex3d(1.11+x, 1.11*1.6+y, 0);
+
+
+	glEnd();
+
+	
+	norm(1.11+x,1.11*1.6+y,0.0,   0.94+x,1.6+y,0.3,   0.94+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(1.11+x, 1.11*1.6+y, 0.0);
+	glVertex3d(0.94+x, 1.6+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.43*1.6+y, 0.0);
+	glVertex3d(0.43+x, 0.43*1.6+y, -0.3);
+	glVertex3d(0.69+x, 0.43*1.6+y, -0.3);
+	glVertex3d(0.69+x, 0.43*1.6+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.43*1.6+y, 0.0);
+	glVertex3d(0.69+x, 0.43*1.6+y, -0.3);
+	glVertex3d(0.69+x, 0.69*1.6+y, -0.3);
+	glVertex3d(0.69+x, 0.69*1.6+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.69*1.6+y, 0.0);
+	glVertex3d(0.69+x, 0.69*1.6+y, -0.3);
+	glVertex3d(0.43+x, 0.69*1.6+y, -0.3);
+	glVertex3d(0.43+x, 0.69*1.6+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.69*1.6+y, 0.0);
+	glVertex3d(0.43+x, 0.69*1.6+y, -0.3);
+	glVertex3d(0.43+x, 0.43*1.6+y, -0.3);
+	glVertex3d(0.43+x, 0.43*1.6+y, 0.0);
+
+	glEnd();
+
+}
+
+void button_caps_enter(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0.0,  0+x,1.11*1.8+y,  0,1.11+x,0+y,0.0, 1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11*1.8+y, 0.0);
+	glVertex3d(1.11+x, 1.11*1.8+y, 0.0);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+	norm(0.17+x,0.17+y,0.3,  0.94+x,1.8+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+105)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 1.8+y, 0.3);
+
+	glTexCoord2d((x1+105)/1024, 1-(y1+50)/1024);
+	glVertex3d(0.94+x, 1.8+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+50)/1024);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+
+	glEnd();
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.17+x,1.8+y,0.3, 0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 1.8+y, 0.3);
+	glVertex3d(0.0+x, 1.11*1.8+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11*1.8+y,0.0,   0.17+x,1.8+y,0.3,   0.94+x,1.8+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 1.11*1.8+y, 0.0);
+	glVertex3d(0.17+x, 1.8+y, 0.3);
+	glVertex3d(0.94+x, 1.8+y, 0.3);
+	glVertex3d(1.11+x, 1.11*1.8+y, 0);
+
+
+	glEnd();
+
+	
+	norm(1.11+x,1.11*1.8+y,0.0,   0.94+x,1.8+y,0.3,   0.94+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(1.11+x, 1.11*1.8+y, 0.0);
+	glVertex3d(0.94+x, 1.8+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.43*1.8+y, 0.0);
+	glVertex3d(0.43+x, 0.43*1.8+y, -0.3);
+	glVertex3d(0.69+x, 0.43*1.8+y, -0.3);
+	glVertex3d(0.69+x, 0.43*1.8+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.43*1.8+y, 0.0);
+	glVertex3d(0.69+x, 0.43*1.8+y, -0.3);
+	glVertex3d(0.69+x, 0.69*1.8+y, -0.3);
+	glVertex3d(0.69+x, 0.69*1.8+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.69*1.8+y, 0.0);
+	glVertex3d(0.69+x, 0.69*1.8+y, -0.3);
+	glVertex3d(0.43+x, 0.69*1.8+y, -0.3);
+	glVertex3d(0.43+x, 0.69*1.8+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.69*1.8+y, 0.0);
+	glVertex3d(0.43+x, 0.69*1.8+y, -0.3);
+	glVertex3d(0.43+x, 0.43*1.8+y, -0.3);
+	glVertex3d(0.43+x, 0.43*1.8+y, 0.0);
+
+	glEnd();
+
+}
+
+void button_shift(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0.0,  0+x,1.11*2.3+y,  0,1.11+x,0+y,0.0, 1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11*2.3+y, 0.0);
+	glVertex3d(1.11+x, 1.11*2.3+y, 0.0);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+	norm(0.17+x,0.17+y,0.3,  0.94+x,2.383+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+141)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 2.383+y, 0.3);
+
+	glTexCoord2d((x1+141)/1024, 1-(y1+51)/1024);
+	glVertex3d(0.94+x, 2.383+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+51)/1024);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+
+	glEnd();
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.17+x,2.383+y,0.3, 0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 2.383+y, 0.3);
+	glVertex3d(0.0+x, 1.11*2.3+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11*2.3+y,0.0,   0.17+x,2.383+y,0.3,   0.94+x,2.383+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 1.11*2.3+y, 0.0);
+	glVertex3d(0.17+x, 2.3+y, 0.3);
+	glVertex3d(0.94+x, 2.3+y, 0.3);
+	glVertex3d(1.11+x, 1.11*2.3+y, 0);
+
+
+	glEnd();
+
+	
+	norm(1.11+x,1.11*2.3+y,0.0,   0.94+x,2.383+y,0.3,   0.94+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(1.11+x, 1.11*2.3+y, 0.0);
+	glVertex3d(0.94+x, 2.383+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.43*2.3+y, 0.0);
+	glVertex3d(0.43+x, 0.43*2.3+y, -0.3);
+	glVertex3d(0.69+x, 0.43*2.3+y, -0.3);
+	glVertex3d(0.69+x, 0.43*2.3+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.43*2.3+y, 0.0);
+	glVertex3d(0.69+x, 0.43*2.3+y, -0.3);
+	glVertex3d(0.69+x, 0.69*2.3+y, -0.3);
+	glVertex3d(0.69+x, 0.69*2.3+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.69*2.3+y, 0.0);
+	glVertex3d(0.69+x, 0.69*2.3+y, -0.3);
+	glVertex3d(0.43+x, 0.69*2.3+y, -0.3);
+	glVertex3d(0.43+x, 0.69*2.3+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.69*2.3+y, 0.0);
+	glVertex3d(0.43+x, 0.69*2.3+y, -0.3);
+	glVertex3d(0.43+x, 0.43*2.3+y, -0.3);
+	glVertex3d(0.43+x, 0.43*2.3+y, 0.0);
+
+	glEnd();
+
+}
+
+void button_space(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0.0,  0+x,1.11*8.7+y,  0,1.11+x,0+y,0.0, 1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11*8.7+y, 0.0);
+	glVertex3d(1.11+x, 1.11*8.7+y, 0.0);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+	norm(0.17+x,0.17+y,0.3,  0.94+x,9.487+y,0.3, 0.94+x,0.17+y,0.3,1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+333)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 9.487+y, 0.3);
+
+	glTexCoord2d((x1+333)/1024, 1-(y1+61)/1024);
+	glVertex3d(0.94+x, 9.487+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+61)/1024);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+
+	glEnd();
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.17+x,9.487+y,0.3, 0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 9.487+y, 0.3);
+	glVertex3d(0.0+x, 1.11*8.7+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11*8.7+y,0.0,   0.17+x,9.487+y,0.3,   0.94+x,9.487+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 1.11*8.7+y, 0.0);
+	glVertex3d(0.17+x, 9.487+y, 0.3);
+	glVertex3d(0.94+x, 9.487+y, 0.3);
+	glVertex3d(1.11+x, 1.11*8.7+y, 0);
+
+
+	glEnd();
+
+	
+	norm(1.11+x,1.11*8.7+y,0.0,   0.94+x,9.487+y,0.3,   0.94+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(1.11+x, 1.11*8.7+y, 0.0);
+	glVertex3d(0.94+x, 9.487+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.43*8.7+y, 0.0);
+	glVertex3d(0.43+x, 0.43*8.7+y, -0.3);
+	glVertex3d(0.69+x, 0.43*8.7+y, -0.3);
+	glVertex3d(0.69+x, 0.43*8.7+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.43*8.7+y, 0.0);
+	glVertex3d(0.69+x, 0.43*8.7+y, -0.3);
+	glVertex3d(0.69+x, 0.69*8.7+y, -0.3);
+	glVertex3d(0.69+x, 0.69*8.7+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.69*8.7+y, 0.0);
+	glVertex3d(0.69+x, 0.69*8.7+y, -0.3);
+	glVertex3d(0.43+x, 0.69*8.7+y, -0.3);
+	glVertex3d(0.43+x, 0.69*8.7+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.69*8.7+y, 0.0);
+	glVertex3d(0.43+x, 0.69*8.7+y, -0.3);
+	glVertex3d(0.43+x, 0.43*8.7+y, -0.3);
+	glVertex3d(0.43+x, 0.43*8.7+y, 0.0);
+
+	glEnd();
+
+}
+
+void button_ctrl_alt(double x, double y, const char c, double x1, double y1) {
+	if(OpenGL::isKeyPressed(c))
+		glTranslated(0, 0, -0.3);
+	////////////////////////////////////////НЕПОСРЕДСТВЕННО КНОПКА
+	norm(0+x,0+y,0.0,  0+x,1.11*1.27+y,  0,1.11+x,0+y,0.0, 1);
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.0+x, 1.11*1.27+y, 0.0);
+	glVertex3d(1.11+x, 1.11*1.27+y, 0.0); 
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+	
+	norm(0.17+x,0.17+y,0.3,  0.94+x,1.24+y,0.3, 0.94+x,0.17+y,0.3,1);
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glTexCoord2d(x1/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+
+	glTexCoord2d((x1+69)/1024, 1-y1/1024);
+	glVertex3d(0.17+x, 1.24+y, 0.3);
+
+	glTexCoord2d((x1+69)/1024, 1-(y1+61)/1024);
+	glVertex3d(0.94+x, 1.24+y, 0.3);
+
+	glTexCoord2d(x1/1024, 1-(y1+61)/1024);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+
+	glEnd();
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.94+x,0.17+y,0.3,1);
+
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glTexCoord2d(0.0, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+
+	glTexCoord2d(0.1, 0.1);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+
+	glEnd();
+
+	
+	norm(0.0+x,0.0+y,0.0,  0.17+x,0.17+y,0.3,  0.17+x,1.24+y,0.3, 0);
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+
+	glBegin(GL_POLYGON);
+	
+	glVertex3d(0.0+x, 0.0+y, 0.0);
+	glVertex3d(0.17+x, 0.17+y, 0.3);
+	glVertex3d(0.17+x, 1.24+y, 0.3);
+	glVertex3d(0.0+x, 1.11*1.27+y, 0.0);
+
+	glEnd();
+
+	
+	norm(0.0+x,1.11*1.27+y,0.0,   0.17+x,1.24+y,0.3,   0.94+x,1.24+y,0.3, 0);
+
+	glColor4d(0.4, 0.1, 0.2, 1);
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.0+x, 1.11*1.27+y, 0.0);
+	glVertex3d(0.17+x, 1.24+y, 0.3);
+	glVertex3d(0.94+x, 1.24+y, 0.3);
+	glVertex3d(1.11+x, 1.11*1.27+y, 0);
+
+
+	glEnd();
+
+	
+	norm(1.11+x,1.11*1.27+y,0.0,   0.94+x,1.24+y,0.3,   0.94+x,0.17+y,0.3, 0);
+
+	glColor4d(0.5, 0.5, 0.5, 1);
+	glBegin(GL_POLYGON);
+
+	glVertex3d(1.11+x, 1.11*1.27+y, 0.0);
+	glVertex3d(0.94+x, 1.24+y, 0.3);
+	glVertex3d(0.94+x, 0.17+y, 0.3);
+	glVertex3d(1.11+x, 0.0+y, 0.0);
+
+	glEnd();
+
+	///////////////////////////////////////////////////НОЖКА КНОПКИ
+
+	glColor4d(0.4, 0.0, 1.0, 1);
+	
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.43*1.27+y, 0.0);
+	glVertex3d(0.43+x, 0.43*1.27+y, -0.3);
+	glVertex3d(0.69+x, 0.43*1.27+y, -0.3);
+	glVertex3d(0.69+x, 0.43*1.27+y, 0.0);
+
+	glEnd();
+	
+
+
+	glColor4d(1.0, 0.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.43*1.27+y, 0.0);
+	glVertex3d(0.69+x, 0.43*1.27+y, -0.3);
+	glVertex3d(0.69+x, 0.69*1.27+y, -0.3);
+	glVertex3d(0.69+x, 0.69*1.27+y, 0.0);
+
+
+	glEnd();
+	
+	
+	glColor4d(0.0, 1.0, 0.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.69+x, 0.69*1.27+y, 0.0);
+	glVertex3d(0.69+x, 0.69*1.27+y, -0.3);
+	glVertex3d(0.43+x, 0.69*1.27+y, -0.3);
+	glVertex3d(0.43+x, 0.69*1.27+y, 0.0);
+
+	glEnd();
+
+	glColor4d(0.0, 0.0, 1.0, 1);
+
+	glBegin(GL_POLYGON);
+
+	glVertex3d(0.43+x, 0.69*1.27+y, 0.0);
+	glVertex3d(0.43+x, 0.69*1.27+y, -0.3);
+	glVertex3d(0.43+x, 0.43*1.27+y, -0.3);
+	glVertex3d(0.43+x, 0.43*1.27+y, 0.0);
+
+	glEnd();
+
+}
+
+void drawing()
+{
+	glNormal3d(0, 0, 1);
+	glBegin(GL_QUADS);
+	glVertex3d(-0.74-0.5, -0.1, -0.3);
+	glVertex3d(6.69, -0.1, -0.3);
+	glVertex3d(6.69, 17.13, -0.3);
+	glVertex3d(-0.74-0.5, 17.13, -0.3);
+	glEnd();
+
+}
 //класс для настройки камеры
 class CustomCamera : public Camera
 {
@@ -87,7 +1352,7 @@ public:
 		s.scale = s.scale*0.08;
 		s.Show();
 		
-		if (OpenGL::isKeyPressed('G'))
+		if (OpenGL::isKeyPressed('G') && !print_mode)
 		{
 			glColor3d(0, 0, 0);
 			//линия от источника света до окружности
@@ -108,7 +1373,7 @@ public:
 	void SetUpLight()
 	{
 		GLfloat amb[] = { 0.2, 0.2, 0.2, 0 };
-		GLfloat dif[] = { 0.5, 0.5, 0.5, 0 };
+		GLfloat dif[] = { 1.0, 1.0, 1.0, 0 };
 		GLfloat spec[] = { .7, .7, .7, 0 };
 		GLfloat position[] = { pos.X(), pos.Y(), pos.Z(), 1. };
 
@@ -121,6 +1386,7 @@ public:
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, dif);
 		// зеркально отражаемая составляющая света
 		glLightfv(GL_LIGHT0, GL_SPECULAR, spec);
+
 		glEnable(GL_LIGHT0);
 	}
 
@@ -149,7 +1415,7 @@ void mouseEvent(OpenGL *ogl, int mX, int mY)
 
 	
 	//двигаем свет по плоскости, в точку где мышь
-	if (OpenGL::isKeyPressed('G') && !OpenGL::isKeyPressed(VK_LBUTTON))
+	if (OpenGL::isKeyPressed('G') && !OpenGL::isKeyPressed(VK_LBUTTON) && !print_mode)
 	{
 		LPPOINT POINT = new tagPOINT();
 		GetCursorPos(POINT);
@@ -172,7 +1438,7 @@ void mouseEvent(OpenGL *ogl, int mX, int mY)
 		light.pos = Vector3(x, y, z);
 	}
 
-	if (OpenGL::isKeyPressed('G') && OpenGL::isKeyPressed(VK_LBUTTON))
+	if (OpenGL::isKeyPressed('G') && OpenGL::isKeyPressed(VK_LBUTTON) && !print_mode)
 	{
 		light.pos = light.pos + Vector3(0, 0, 0.02*dy);
 	}
@@ -194,17 +1460,17 @@ void mouseWheelEvent(OpenGL *ogl, int delta)
 
 void keyDownEvent(OpenGL *ogl, int key)
 {
-	if (key == 'L')
+	if (key == 'L' && !print_mode)
 	{
 		lightMode = !lightMode;
 	}
 
-	if (key == 'T')
+	if (key == 'T' && !print_mode)
 	{
 		textureMode = !textureMode;
 	}
 
-	if (key == 'R')
+	if (key == 'R' && !print_mode)
 	{
 		camera.fi1 = 1;
 		camera.fi2 = 1;
@@ -213,9 +1479,19 @@ void keyDownEvent(OpenGL *ogl, int key)
 		light.pos = Vector3(1, 1, 3);
 	}
 
-	if (key == 'F')
+	if (key == 'F' && !print_mode)
 	{
 		light.pos = camera.pos;
+	}
+
+	if (key == 'A' && !print_mode)
+	{
+		alphamode = !alphamode;
+	}
+
+	if (key == VK_INSERT)
+	{
+		print_mode = !print_mode;
 	}
 }
 
@@ -248,7 +1524,7 @@ void initRender(OpenGL *ogl)
 	//массив символов, (высота*ширина*4      4, потомучто   выше, мы указали использовать по 4 байта на пиксель текстуры - R G B A)
 	char *texCharArray;
 	int texW, texH;
-	OpenGL::LoadBMP("test2.bmp", &texW, &texH, &texarray);
+	OpenGL::LoadBMP("texture_prism_norm.bmp", &texW, &texH, &texarray);
 	OpenGL::RGBtoChar(texarray, texW, texH, &texCharArray);
 
 	
@@ -283,22 +1559,13 @@ void initRender(OpenGL *ogl)
 	glEnable(GL_LINE_SMOOTH); 
 
 
-	//   задать параметры освещения
-	//  параметр GL_LIGHT_MODEL_TWO_SIDE - 
-	//                0 -  лицевые и изнаночные рисуются одинаково(по умолчанию), 
-	//                1 - лицевые и изнаночные обрабатываются разными режимами       
-	//                соответственно лицевым и изнаночным свойствам материалов.    
-	//  параметр GL_LIGHT_MODEL_AMBIENT - задать фоновое освещение, 
-	//                не зависящее от сточников
-	// по умолчанию (0.2, 0.2, 0.2, 1.0)
 
-	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
 }
 
 
 
-
-
+bool flag = false;
 void Render(OpenGL *ogl)
 {       	
 	
@@ -306,6 +1573,7 @@ void Render(OpenGL *ogl)
 	
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
+	glDisable(GL_BLEND);
 
 	glEnable(GL_DEPTH_TEST);
 	if (textureMode)
@@ -315,13 +1583,18 @@ void Render(OpenGL *ogl)
 		glEnable(GL_LIGHTING);
 
 
-	////альфаналожение
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//альфаналожение
+	if (alphamode)
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+
 	//настройка материала
-	GLfloat amb[] = { 0.2, 0.2, 0.1, 0.7 };
-	GLfloat dif[] = { 0.4, 0.6, 0.8, 1 };
-	GLfloat spec[] = { 0.9, 0.8, 0.3, 0.7 };
+	GLfloat amb[] = { 0.2, 0.2, 0.1, 1. };
+	GLfloat dif[] = { 0.4, 0.65, 0.5, 1. };
+	GLfloat spec[] = { 0.9, 0.8, 0.3, 1. };
 	GLfloat sh = 0.1f * 256;
 
 
@@ -330,253 +1603,317 @@ void Render(OpenGL *ogl)
 	//дифузная
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
 	//зеркальная
-	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);\
 	//размер блика
 	glMaterialf(GL_FRONT, GL_SHININESS, sh);
 
-    //чтоб было красиво, без квадратиков (сглаживание освещения)
 	glShadeModel(GL_SMOOTH);
-	//===================================
-	//Прогать тут  
-	//Начальные данные
-	ThreePoints MyPoints(-7, 6, -3, -1, -8, -6), MyPoints2(-1, 4.8, 3, 6, 5, 3.6);
-	ThreePoints tMyPoints((double)101 / 512, (double)396 / 512, (double)188 / 512, (double)271 / 512, (double)82 / 512, (double)143 / 512), tMyPoints2((double)228 / 512, (double)371 / 512, (double)306 / 512, (double)398 / 512, (double)352 / 512, (double)346 / 512);
-
-	double Cx, Cy, r, Cx2, Cy2, r2;
-	double tCx, tCy, tr, tCx2, tCy2, tr2;
-	std::tie(Cx, Cy, r) = getCircle(MyPoints);
-	std::tie(Cx2, Cy2, r2) = getCircle(MyPoints2);
-	std::tie(tCx, tCy, tr) = getCircle(tMyPoints);
-	std::tie(tCx2, tCy2, tr2) = getCircle(tMyPoints2);
-	double angle = Angles::getAngle(MyPoints.X1, MyPoints.Y1, MyPoints.X3, MyPoints.Y3, Cx, Cy), angle2 = Angles::getAngle(MyPoints2.X1, MyPoints2.Y1, MyPoints2.X3, MyPoints2.Y3, Cx2, Cy2) + 2;
-	double start = Angles::getStartAngle(MyPoints.X1, MyPoints.Y1, Cx, Cy, r), start2 = -1 * Angles::getStartAngle(MyPoints2.X1, MyPoints2.Y1, Cx2, Cy2, r2) - 1;
-	double A[] = {-7, 6, 0}, A1[] = {-7, 6, 3}, B[] = {-3, -1, 0}, B1[] = {-3, -1, 3}, C[] = {-8, -6, 0}, C1[] = {-8, -6, 3}, D[] = {8, -2, 0}, D1[] = {8, -2, 3}, E[] = {8, 3, 0}, E1[] = {8, 3, 3}, F[] = {5, 3.6, 0}, F1[] = {5, 3.6, 3}, G[] = {3, 6, 0}, G1[] = {3, 6, 3}, H[] = {-1, 4.8, 0}, H1[] = {-1, 4.8, 3};
-	double tA[] = { (double)101/512, (double)396 / 512 }, tB[] = { (double)188 / 512, (double)271 / 512 }, tC[] = { (double)82 / 512, (double)143 / 512 }, tD[] = { (double)417 / 512, (double)228 / 512 }, tE[] = { (double)417 / 512, (double)333 / 512 }, tF[] = { (double)352 / 512, (double)346 / 512 }, tG[] = { (double)306 / 512, (double)398 / 512 }, tH[] = { (double)228 / 512, (double)371 / 512 };
-	double tN1[] = { (double)88 / 512, (double)109 / 512 }, tN2[] = { (double)425 / 512, (double)194 / 512 }, tR1[] = { (double)452 / 512, (double)228 / 512 }, tR2[] = { (double)452 / 512, (double)333 / 512 }, tU1[] = { (double)97 / 512, (double)75 / 512 }, tU2[] = { (double)433 / 512, (double)160 / 512 }, tL1[] = { (double)453 / 512, (double)429 / 512 }, tL2[] = { (double)453 / 512, (double)134 / 512 }, tL3[] = { (double)487 / 512,(double)134 / 512 }, tL4[] = { (double)487 / 512, (double)429 / 512 };
-	double tT1[] = { (double)179 / 512, (double)131 / 512 }, tT2[] = { (double)189 / 512, (double)98 / 512 }, tT3[] = { (double)310 / 512, (double)163 / 512 }, tT4[] = { (double)320 / 512, (double)131 / 512 };
-
-	double nX = 0, nY = 0, nZ = 0;
-	double q[3], w[3], e[3];
-	double centerPoint[] = {G[0], (D[1] + E[1]) / 2, 0}, centerPoint1[] = { G[0], (D[1] + E[1]) / 2, 3 };
-	double temp = 0, temp2 = 0;
-	//Боковые грани
-	glColor4d(0.39, 0.39, 0.38, 0.98);
-
-	//Правая грань
-	glBegin(GL_QUADS);
-	std::tie(nX, nY, nZ) = getNormal(E, D, D1);
-	glNormal3d(nX, nY, nZ);
-	glTexCoord2dv(tD);
-	glVertex3dv(D1);
-	glTexCoord2dv(tR1);
-	glVertex3dv(D);
-	glTexCoord2dv(tR2);
-	glVertex3dv(E);
-	glTexCoord2dv(tE);
-	glVertex3dv(E1);
-	glEnd();
-
-	//Верхняя правая грань
-	glBegin(GL_QUADS);
-	std::tie(nX, nY, nZ) = getNormal(F, E, E1);
-	glNormal3d(nX, nY, nZ);
-	glTexCoord2dv(tN1);
-	glVertex3dv(E1);
-	glTexCoord2dv(tU1);
-	glVertex3dv(E);
-	glTexCoord2dv(tT2);
-	glVertex3dv(F);
-	glTexCoord2dv(tT1);
-	glVertex3dv(F1);
-	glEnd();
-
-	//Верхняя средняя грань
-	glBegin(GL_TRIANGLE_STRIP);
-	temp = 0;
-	temp2 = 0;
-	std::tie(nX, nY, nZ) = getNormal(F, E, E1);
-	glNormal3d(nX, nY, nZ);
-	for (double i = start2 + 1; i < angle2 + start2; i++)
-	{
-		q[0] = Cx2 + r2 * sinf(i * 3.141592653589793 / 180);
-		q[1] = Cy2 + r2 * cosf(i* 3.141592653589793 / 180);
-		q[2] = 0;
-		w[0] = Cx2 + r2 * sinf(i * 3.141592653589793 / 180);
-		w[1] = Cy2 + r2 * cosf(i* 3.141592653589793 / 180);
-		w[2] = 3;
-		e[0] = Cx2 + r2 * sinf((i + 1) * 3.141592653589793 / 180);
-		e[1] = Cy2 + r2 * cosf((i + 1)* 3.141592653589793 / 180);
-		e[2] = 0;
-		std::tie(nX, nY, nZ) = getNormal(w, q, e);
-		glNormal3d(nX, nY, nZ);
-		glTexCoord2d(tU1[0] + temp, tU1[1] + temp2);
-		glVertex3d(Cx2 + r2 * sinf(i * 3.141592653589793 / 180), Cy2 + r2 * cosf(i* 3.141592653589793 / 180), 0);
-		glTexCoord2d(tN1[0] + temp, tN1[1] + temp2);
-		glVertex3d(Cx2 + r2 * sinf(i * 3.141592653589793 / 180), Cy2 + r2 * cosf(i* 3.141592653589793 / 180), 3);
-		temp += (double)(131 / angle2 / 512) ;
-		temp2 += (double)(32.481879 / angle2 / 512);
-	}
-	glEnd();
-
-
-	//Верхня левая грань
-	glBegin(GL_QUADS);
-	std::tie(nX, nY, nZ) = getNormal(A, H, H1);
-	glNormal3d(nX, nY, nZ);
-	glTexCoord2dv(tT3);
-	glVertex3dv(H1);
-	glTexCoord2dv(tT4);
-	glVertex3dv(H);
-	glTexCoord2dv(tU2);
-	glVertex3dv(A);
-	glTexCoord2dv(tN2);
-	glVertex3dv(A1);
-	glEnd();
-
-	//Нижняя грань
-	glBegin(GL_QUADS);
-	std::tie(nX, nY, nZ) = getNormal(D, C, C1);
-	glNormal3d(nX, nY, nZ);
-	glTexCoord2dv(tC);
-	glVertex3dv(C1);
-	glTexCoord2dv(tN1);
-	glVertex3dv(C);
-	glTexCoord2dv(tN2);
-	glVertex3dv(D);
-	glTexCoord2dv(tD);
-	glVertex3dv(D1);
-	glEnd();
 	
-	//Левая впуклая грань
-	glBegin(GL_TRIANGLE_STRIP);
-	for (double i = start; i < angle + start; i++)
-	{
-		q[0] = Cx + r * sinf(i * 3.141592653589793 / 180);
-		q[1] = Cy + r * cosf(i* 3.141592653589793 / 180);
-		q[2] = 0;
-		w[0] = Cx + r * sinf(i * 3.141592653589793 / 180);
-		w[1] = Cy + r * cosf(i * 3.141592653589793 / 180);
-		w[2] = 3;
-		e[0] = Cx + r * sinf((i + 1) * 3.141592653589793 / 180);
-		e[1] = Cy + r * cosf((i + 1)* 3.141592653589793 / 180);
-		e[2] = 0;
-		std::tie(nX, nY, nZ) = getNormal(e, q, w);
-		glNormal3d(nX, nY, nZ);
-		if(i == start)	
-			glTexCoord2dv(tL3);
-		else if(i == angle + start - 1)	
-			glTexCoord2dv(tL4);
-		glVertex3d(Cx + r * sinf(i * 3.141592653589793 / 180), Cy + r * cosf(i* 3.141592653589793 / 180), 0);
-		if (i == start)	
-			glTexCoord2dv(tL2);
-		else if (i == angle + start - 1)	
-			glTexCoord2dv(tL1);
-		glVertex3d(Cx + r * sinf(i * 3.141592653589793 / 180), Cy + r * cosf(i* 3.141592653589793 / 180), 3);
-	}
-	glEnd();
 
+	glTranslated(0, -8, 0);
 
+	glPushMatrix();
+    button_f(-1.17/1.6, 0.0, VK_ESCAPE, 11, 11);
+	glPopMatrix();
 	
-	//Основания
-	glColor4d(0.6, 0.61, 0.6, 0.6);
-	//Нижнее основание
-	glNormal3d(0, 0, -1);
-	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2dv(tE);
-	glVertex3dv(E);
-	temp = 0;
-	temp2 = 0;
-	for (double i = start; i < angle + start; i++)
-	{
-		glTexCoord2d(tCx + tr * sinf(i * 3.141592653589793 / 180), tCy + tr * cosf(i* 3.141592653589793 / 180));
-		glVertex3d(Cx + r * sinf(i * 3.141592653589793 / 180), Cy + r * cosf(i* 3.141592653589793 / 180), 0);
-		glTexCoord2d(tE[0], tE[1] - temp2);
-		glVertex3d(E[0], E[1] - temp, 0);
-		temp += (double)5 / angle;
-		temp2 += (double)(105/angle/512);
-	}
-	glTexCoord2dv(tD);
-	glVertex3dv(D);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glTexCoord2dv(tF);
-	glVertex3dv(F);
-	for (double i = start2; i < angle2 + start2; i+=1)
-	{
-		glTexCoord2d(tCx2 + tr2 * sinf(i * 3.141592653589793 / 180), tCy2 + tr2 * cosf(i* 3.141592653589793 / 180));
-		glVertex3d(Cx2 + r2 * sinf(i * 3.141592653589793 / 180), Cy2 + r2 * cosf(i* 3.141592653589793 / 180), 0);
-	}
-	glTexCoord2dv(tH);
-	glVertex3dv(H);
-	glEnd();
-
-	//Верхнее основание
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glNormal3d(0, 0, 1);
-	glBegin(GL_TRIANGLE_STRIP);
-	glTexCoord2dv(tE);
-	glVertex3dv(E1);
-	temp = 0;
-	temp2 = 0;
-	for (double i = start; i < angle + start; i++)
-	{
-		glTexCoord2d(tCx + tr * sinf(i * 3.141592653589793 / 180), tCy + tr * cosf(i* 3.141592653589793 / 180));
-		glVertex3d(Cx + r * sinf(i * 3.141592653589793 / 180), Cy + r * cosf(i* 3.141592653589793 / 180), 3);
-		glTexCoord2d(tE[0], tE[1] - temp2);
-		glVertex3d(E1[0], E1[1] - temp, 3);
-		temp += 5 / angle;
-		temp2 += (double)(105 / angle / 512);
-	}
-	glTexCoord2dv(tD);
-	glVertex3dv(D1);
-	glEnd();
-	glBegin(GL_POLYGON);
-	glTexCoord2dv(tF);
-	glVertex3dv(F1);
-	for (double i = start2; i < angle2 + start2; i+=1)
-	{
-		glTexCoord2d(tCx2 + tr2 * sinf(i * 3.141592653589793 / 180), tCy2 + tr2 * cosf(i* 3.141592653589793 / 180));
-		glVertex3d(Cx2 + r2 * sinf(i * 3.141592653589793 / 180), Cy2 + r2 * cosf(i* 3.141592653589793 / 180), 3);
-	}
-	glTexCoord2dv(tH);
-	glVertex3dv(H1);
-	glEnd();
-	/*glDisable(GL_BLEND);*/
+	glPushMatrix();
+    button_f(-1.17/1.6, 1.5, VK_F1, 84, 11);
+	glPopMatrix();
 	
-	//Конец вброса
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67, VK_F2, 157, 11);
+	glPopMatrix();
 
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 1, VK_F3, 230, 11);
+	glPopMatrix();
 
-	////Начало рисования квадратика станкина
-	//double A[2] = { -4, -4 };
-	//double B[2] = { 4, -4 };
-	//double C[2] = { 4, 4 };
-	//double D[2] = { -4, 4 };
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 2, VK_F4, 302, 11);
+	glPopMatrix();
 
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 3, VK_F5, 375, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 4, VK_F6, 448, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 5, VK_F7, 520, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 6, VK_F8, 593, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 7, VK_F9, 666, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 8, VK_F10, 738, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 9, VK_F11, 811, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 10, VK_F12, 884, 11);
+	glPopMatrix();
+
+	glPushMatrix();
+    button_f(-1.17/1.6, 2.67+1.17 * 11, VK_DELETE, 957, 11);
+	glPopMatrix();
 	
-	
-	//glBegin(GL_QUADS);
 
-	//glNormal3d(0, 0, 1);
-	//glTexCoord2d(0, 0);
-	//glVertex2dv(A);
-	//glTexCoord2d(1, 0);
-	//glVertex2dv(B);
-	//glTexCoord2d(1, 1);
-	//glVertex2dv(C);
-	//glTexCoord2d(0, 1);
-	//glVertex2dv(D);
+	glPushMatrix();
+    button_stand(0.0, 0.0, VK_OEM_3, 10, 54);
+	glPopMatrix();
 
-	//glEnd();
-	////конец рисования квадратика станкина
-    
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 1, '1', 80, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 2, '2', 151, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 3, '3', 221, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 4, '4', 291, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 5, '5', 361, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 6, '6', 432, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 7, '7', 502, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 8, '8', 572, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 9, '9', 642, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 10, '0', 712, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 11, VK_OEM_MINUS, 783, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(0.0, 1.17 * 12, VK_OEM_PLUS, 853, 54);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_tab_delete(0.0, 1.17*13, VK_BACK, 924, 55);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_tab_delete(1.17, 0.0, VK_TAB, 11, 123);
+	glPopMatrix();
 	
-	//текст сообщения вверху слева, если надоест - закоментировать, или заменить =)
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 0, 'Q', 116, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 1, 'W', 186, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 2, 'E', 256, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 3, 'R', 326, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 4, 'T', 397, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 5, 'Y', 467, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 6, 'U', 537, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 7, 'I', 607, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 8, 'O', 677, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 9, 'P', 747, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 10, VK_OEM_4, 818, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 11, VK_OEM_6, 888, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17, 1.836 + 1.17 * 12, VK_OEM_5, 958, 122);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_caps_enter(1.17*2, 0.0, VK_CAPITAL, 11, 191);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 0, 'A', 133, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 1, 'S', 203, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 2, 'D', 274, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 3, 'F', 344, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 4, 'G', 414, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 5, 'H', 484, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 6, 'J', 554, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 7, 'K', 625, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 8, 'L', 695, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 9, VK_OEM_1, 765, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*2, 2.1 + 1.17 * 10, VK_OEM_7, 835, 190);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_caps_enter(1.17*2, 2.1 + 1.17 * 11, VK_RETURN, 907, 191);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_shift(1.17*3, 0.0, VK_SHIFT, 10, 260);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 0, 'Z', 168, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 1, 'X', 238, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 2, 'C', 309, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 3, 'V', 379, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 4, 'B', 449, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 5, 'N', 519, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 6, 'M', 590, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 7, 188, 660, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 8, 190, 730, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_stand(1.17*3, 2.653 + 1.17 * 9, 191, 800, 259);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_shift(1.17*3, 2.653 + 1.17 * 10 + 0.05, VK_SHIFT, 870, 260);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_ctrl_alt(1.17*4, 0.0, VK_CONTROL, 221, 328);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_ctrl_alt(1.17*4, 1.47, VK_MENU, 220, 405);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_space(1.17*4, 1.47*2, VK_SPACE, 309, 327);
+	glPopMatrix();
+	
+	glPushMatrix();
+	button_f(1.17*4 + 0.49, 0.82 + 1.47*2 + 9.76, VK_LEFT, 819, 362);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_up_down(1.17*4, 0.82 + 1.47*2 + 9.76 + 1.17, VK_UP, 889, 328);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_up_down(1.17*4 + 0.61, 0.82 + 1.47*2 + 9.76 + 1.17, VK_DOWN, 889, 368);
+	glPopMatrix();
+
+	glPushMatrix();
+	button_f(1.17*4 + 0.49, 0.82 + 1.47*2 + 9.76 + 1.17 * 2, VK_RIGHT, 959, 362);
+	glPopMatrix();
+	
+	drawing();
+
+	//текст сообщения вверху слева
 	char c[250];  //максимальная длина сообщения
-	sprintf_s(c, "(T)Текстуры - %d\n(L)Свет - %d\n\nУправление светом:\n"
-		"G - перемещение в горизонтальной плоскости,\nG+ЛКМ+перемещение по вертикальной линии\n"
-		"R - установить камеру и свет в начальное положение\n"
-		"F - переместить свет в точку камеры", textureMode, lightMode);
+	sprintf_s(c, "Кнопкой INSERT производится переключение между режимом моделирования печати и режимом управления светом/отключения текстур\nУправление светом аналогичное управлению во второй лабораторной");
 	ogl->message = std::string(c);
 
 

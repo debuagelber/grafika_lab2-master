@@ -57,9 +57,6 @@
     <ClInclude Include="PrimitivesStatic.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
-    <ClInclude Include="RandomTrash.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenGLrememberProj.cpp">
